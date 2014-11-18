@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>CDAL.h</itemPath>
+      <itemPath>PSLL.h</itemPath>
+      <itemPath>SDAL.h</itemPath>
+      <itemPath>SSLL.h</itemPath>
+      <itemPath>catch.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>CDAL_test.cpp</itemPath>
+      <itemPath>PSLL_test.cpp</itemPath>
+      <itemPath>SDAL_test.cpp</itemPath>
+      <itemPath>SSLL_test.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <commandLine>-std=c++0x</commandLine>
+        </ccTool>
+      </compileType>
+      <item path="CDAL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CDAL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PSLL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PSLL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SDAL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SDAL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SSLL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SSLL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="catch.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="CDAL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CDAL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PSLL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PSLL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SDAL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SDAL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SSLL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SSLL_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="catch.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
