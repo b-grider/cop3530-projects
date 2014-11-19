@@ -4,7 +4,7 @@
  *
  * Created on November 18, 2014, 11:37 AM
  */
-
+/*
 #ifndef OA_HASHMAP_H
 #define	OA_HASHMAP_H
 
@@ -23,18 +23,18 @@ class oa_hashmap {
         //FIELDS    FIELDS      FIELDS
         //=============================
     
-    link kvpairs;
+    link kvpairs[100];
     int size;
     
 public:
     
     oa_hashmap() {
-        link[] mapArray = new link[50];
-        kvpairs = mapArray;
+       // link[] mapArray = new link[50];
+        //kvpairs = new link[50];
         size=0;
     }
     
-};
+};*/
 
-#endif	/* OA_HASHMAP_H */
+//#endif	/* OA_HASHMAP_H */
 

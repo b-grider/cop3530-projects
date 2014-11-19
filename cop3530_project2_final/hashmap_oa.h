@@ -4,12 +4,12 @@
  *
  * Created on November 17, 2014, 2:33 PM
  */
-/*
+
 #ifndef HASHMAP_OA_H
 #define	HASHMAP_OA_H
 
 #include<iostream>
-//#include<>
+
 
 class hashmap_oa {
     
@@ -21,7 +21,7 @@ class hashmap_oa {
             int key;
             char value;
 
-            item(int key, int value) : key(this->key), value(this->value) {} 
+            item(int thisKey, char thisValue) : key(thisKey), value(thisValue) {} 
         };
         
         typedef item* link;
@@ -30,8 +30,8 @@ class hashmap_oa {
         //FIELDS    FIELDS      FIELDS
         //=============================
     
-    link kvpairs;
-    int size;
+    link kvpairs[50];
+    int numberOfItems;
     
     
             //===========================
@@ -41,9 +41,12 @@ class hashmap_oa {
             bool exists(link thisItem, int key) {
                 bool retval;
 
-                    if(thisItem->key == key) {     //If an item with the same key exists
-                        retval = true;                                                      //return true
+                    if(thisItem == nullptr) {
+                        retval == false;
                     }
+                    else if(thisItem->key == key) {     //If an item with the same key exists
+                            retval = true;                                                      //return true
+                     }
                     else {
                         retval=false;
                     }
@@ -71,7 +74,7 @@ public:
     //=============================
     
     hashmap_oa() {
-        kvpairs = new link[50];
+        //kvpairs = new link[50];
         
             for(int i=0; i<50; i++) {
                 kvpairs[i] = nullptr;       //initialize all array slots as empty
@@ -80,9 +83,9 @@ public:
     
     //========================
     //     PUBLIC MEMBERS
-    //======================== */
+    //======================== 
     
-/*bool insert( int key, char value ) {
+bool insert( int key, char value ) {
     
     bool retval;
                         
@@ -101,44 +104,46 @@ public:
          if(this->exists(kvpairs[i], key)) {
              this->replaceValue(kvpairs[i], value );
              retval=true;
+            // numberOfItems++;         don't increment the size; something is being replaced
          }
          else if(kvpairs[i] == nullptr) {
              kvpairs[i] = new item(key, value);
              retval=true;
+             numberOfItems++;
          }
          
     return retval;
-}*/
+}
     
 // — if there is space available, adds the specified key/value-pair to the hash map and returns true; 
 //otherwise returns false. If an item already exists in the map with the same key, replace its value.
 
-/*bool remove( std::string key, int value) {
+bool remove( std::string key, int value) {
     
     return true;
-}*/
+}
 //— if there is an item matching key, removes the key/value-pair from the map, stores it's value in value, 
 //and returns true; otherwise returns false.
 
-/*bool search( std::string key, int value ) {
+bool search( int key, int value ) {
     
-    bool retval;
+    bool retval=false;
+    int cap = this->capacity();
     
-        if(this->exists(key)) {                     //If an item with the same key exists
-            kvpairs[key%50]->value = value;         //access it and replace the value with this value
-            retval = true;
-        }
-        else {
-            retval=false;                           //otherwise, we're gonna return false;
+        for(int i=0; i<cap; i++) {
+            if(this->exists(kvpairs[i], key)) {                     //If an item with the same key exists
+                kvpairs[key%50]->value = value;         //access it and replace the value with this value
+                retval = true;
+            }
         }
     
     return retval;
-}*/
+}
 
 //— if there is an item matching key, stores it's value in value, and returns true (the item remains in the map);
 //otherwise returns false.
 
-/*void clear() {
+void clear() {
     
     for(int i=0; i<50; i++) {
         if(kvpairs[i]!=nullptr) {
@@ -146,45 +151,57 @@ public:
             kvpairs[i] = nullptr;
         }
     }
+    numberOfItems=0;
     
     return;
-}*/
+}
 
 //— removes all items from the map.
 
-/*bool is_empty() {
+bool is_empty() {
     
     bool retval;
     
-        (size == 50)? retval=true: retval=false;
+        (numberOfItems == 50)? retval=true: retval=false;
     
     return retval;
-}*/
+}
 //— returns true IFF the map contains no elements.
 
-/*std::size_t capacity() {
+std::size_t capacity() {
     return 50;
-} */
+} 
 //— returns the number of slots in the map.
 
-/*std::size_t size() {
-    return 27;
-}*/
+std::size_t size() {
+    return numberOfItems;
+}
 //— returns the number of items actually stored in the map.
 
-/*double load() {
-    return 27.7;
-}*/
+double load() {
+    return ((this->size())/(this->capacity()));
+}
 //— returns the map's load factor (size = load * capacity).
 
-/*std::ostream& print( std::ostream& o ) {
+std::ostream& print( std::ostream& o ) {
+    int s = this->capacity();
+    
+        for(int i=0; i<s; i++) {
+            if(kvpairs[i] == nullptr) {
+                o << "-";
+            }
+            else {
+                o << kvpairs[i]->key;
+            }
+            o << ", ";
+        }
     return o;
-} */
+}
 //— inserts into the ostream, the backing array's contents in sequential order. 
 //Empty slots shall be denoted by a hyphen, non-empty slots by that item's key. 
 //[This function will be used for debugging/monitoring].
     
-//};
+};
 
-//#endif	/* HASHMAP_OA_H */
+#endif	/* HASHMAP_OA_H */
 
