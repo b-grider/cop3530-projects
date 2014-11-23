@@ -118,7 +118,9 @@ bool insert( int key, char value ) {
 // — if there is space available, adds the specified key/value-pair to the hash map and returns true; 
 //otherwise returns false. If an item already exists in the map with the same key, replace its value.
 
-bool remove( std::string key, int value) {
+bool remove( int key, char value) {
+    
+    
     
     return true;
 }

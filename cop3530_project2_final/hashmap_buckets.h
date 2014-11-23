@@ -20,8 +20,10 @@ class hashmap_buckets {
      struct item {
             int key;
             char value;
+            item* next;
 
-            item(int thisKey, char thisValue) : key(thisKey), value(thisValue) {} 
+            item(int thisKey, char thisValue) : key(thisKey), value(thisValue), next(nullptr) {}
+            item(int thisKey, char thisValue, item* nextOne) : key(thisKey), value(thisValue), next(nextOne) {}
         };
         
         typedef item* link;
@@ -39,17 +41,14 @@ class hashmap_buckets {
             //===========================
     
             bool exists(link thisItem, int key) {
-                bool retval;
+                bool retval=false;
 
-                    if(thisItem == nullptr) {
-                        retval == false;
+                while(thisItem != nullptr) {
+                    if(thisItem->key == key) {
+                        retval = true;
                     }
-                    else if(thisItem->key == key) {     //If an item with the same key exists
-                            retval = true;                                                      //return true
-                     }
-                    else {
-                        retval=false;
-                    }
+                    thisItem=thisItem->next;
+                }
 
                 return retval;
             }
@@ -63,7 +62,7 @@ class hashmap_buckets {
             }
             
             int secondaryHash(int key) {
-                return ((key%97)+1);
+                return ((key%43)+1);
             }
     
     
@@ -91,23 +90,19 @@ bool insert( int key, char value ) {
                         
          int i=key%50;            //starting array index is key%50 (naive hash)
          int count = 0;           //Start with the count at 0 break if we hit 50
+         item* temptr = kvpairs[i];
          
-            while((kvpairs[i] != nullptr) && !(this->exists(kvpairs[i], key))) {
-                (i<49)? i++: i=0;       //wrap around
-                count++;                //increment count for every comparison
-                if(count == 50) {
-                   retval=false;        //we will return false;
-                   break;               //If we've traversed every item and there's nowhere to insert
-                }
+            while((temptr != nullptr) && (temptr->key != key)) {
+                temptr = temptr->next;
             }
          
-         if(this->exists(kvpairs[i], key)) {
-             this->replaceValue(kvpairs[i], value );
+         if(this->exists(temptr, key)) {
+             this->replaceValue(temptr, value );
              retval=true;
             // numberOfItems++;         don't increment the size; something is being replaced
          }
-         else if(kvpairs[i] == nullptr) {
-             kvpairs[i] = new item(key, value);
+         else if(temptr == nullptr) {
+             temptr = new item(key, value);
              retval=true;
              numberOfItems++;
          }
@@ -128,11 +123,13 @@ bool remove( std::string key, int value) {
 bool search( int key, int value ) {
     
     bool retval=false;
+    int index = key%50;
+    item* temptr = kvpairs[index];
     int cap = this->capacity();
     
-        for(int i=0; i<cap; i++) {
-            if(this->exists(kvpairs[i], key)) {                     //If an item with the same key exists
-                kvpairs[key%50]->value = value;         //access it and replace the value with this value
+    while(temptr != nullptr) {
+            if(this->exists(temptr, key)) {                     //If an item with the same key exists
+                temptr->value = value;         //access it and replace the value with this value
                 retval = true;
             }
         }
@@ -147,8 +144,13 @@ void clear() {
     
     for(int i=0; i<50; i++) {
         if(kvpairs[i]!=nullptr) {
-            delete kvpairs[i];
-            kvpairs[i] = nullptr;
+            item* temptr1 = kvpairs[i];
+            item* temptr2;
+            while(temptr1 != nullptr) {
+                temptr2 = temptr1->next;
+                delete temptr1;
+                temptr1=temptr2;
+            }
         }
     }
     numberOfItems=0;
@@ -162,7 +164,7 @@ bool is_empty() {
     
     bool retval;
     
-        (numberOfItems == 50)? retval=true: retval=false;
+        (numberOfItems == this->capacity())? retval=true: retval=false;
     
     return retval;
 }
@@ -188,12 +190,15 @@ std::ostream& print( std::ostream& o ) {
     
         for(int i=0; i<s; i++) {
             if(kvpairs[i] == nullptr) {
-                o << "-";
+                o << "-, ";
             }
             else {
-                o << kvpairs[i]->key;
+                item* temptr = kvpairs[i];
+                    while(temptr!=nullptr) {
+                        o << temptr->key << ", ";
+                        temptr = temptr->next;
+                    }
             }
-            o << ", ";
         }
     return o;
 }
