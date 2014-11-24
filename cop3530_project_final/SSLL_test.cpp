@@ -217,3 +217,20 @@ TEST_CASE("Constructs a list, destructs it, checks the size and head/tail before
    delete test;
     
 }
+
+TEST_CASE("Constructs a list, Creates iterators using ", "[SSLL::SSLL(),  SSLL::SSLL_Iter::SSLL_Iter(), SSLL::begin(), SSLL::SSLL_Iter::operator++() ]") {
+    SSLL<int> testList;
+    
+    for(int i=0; i<211; i++) {
+        testList.push_back(i);
+    }
+    
+    SSLL<int>::iterator iter = testList.begin();
+    
+    REQUIRE(*iter == 0);
+    for(int i=0; i<57; i++) {
+        iter++;
+    }
+    REQUIRE(*iter == 57);
+    
+}

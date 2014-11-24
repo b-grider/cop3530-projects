@@ -148,11 +148,10 @@ class CDAL {
              };
              
              
-    typedef int size_t;
-             
+    //typedef int size_t;
     node* head;
     node* tail;
-    size_t totalSize;
+    int totalSize;
     int numberOfNodes;
     
     
@@ -213,7 +212,8 @@ class CDAL {
         public:             // BEGINNING OF PUBLIC MEMBERS    BEGINNING OF PUBLIC MEMBERS
                             //============================================================
             
-            
+            typedef T value_type;
+            typedef std::size_t size_t;
             
             //====================================================
             //   CONSTRUCTORS    CONSTRUCTORS     CONSTRUCTORS
@@ -414,6 +414,8 @@ class CDAL {
      
      
      
+            typedef CDAL_Iter iterator;
+            typedef CDAL_Const_Iter const_iterator;
         
      
      CDAL_Iter begin() {

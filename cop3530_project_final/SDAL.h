@@ -18,7 +18,7 @@ namespace cop3530 {
     template<typename T>
     class SDAL {
 
-        typedef int size_t;
+       // typedef int size_t;
         
         double listSize;
         double arraySize;
@@ -212,6 +212,13 @@ namespace cop3530 {
                   }
          };
 
+         
+         
+            typedef T value_type;
+            typedef std::size_t size_t;
+            typedef SDAL_Iter iterator;
+            typedef SDAL_Const_Iter const_iterator;
+            
 
             SDAL() {
                 listSize=0;

@@ -25,11 +25,11 @@ class PSLL {
     };
     
     typedef node* link;
-    typedef int size_t;
+   // typedef int size_t;
     
     node* listHead;
     node* listTail;         //List members
-    size_t listSize;
+    int listSize;
     
     link x;                 //global link for conducting list operations. This will be for strictly utility purposes.
     
@@ -83,6 +83,7 @@ class PSLL {
     
     
     public:
+        
         
         //=======================================================================
         //          CONSTRUCTORS         CONSTRUCTORS        CONSTRUCTORS
@@ -281,7 +282,13 @@ class PSLL {
               }
      };
         
-        
+     
+            typedef T value_type;
+            typedef std::size_t size_t;
+            typedef PSLL_Iter iterator;
+            typedef PSLL_Const_Iter const_iterator;   
+     
+     
      //=========================================================================
      //     PUBLIC MEMBER FUNCTIONS     PUBLIC MEMBER FUNCTIONS
      //=========================================================================

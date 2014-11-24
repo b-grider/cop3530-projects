@@ -30,12 +30,13 @@ namespace cop3530 {
         node* next;
     }; // end struct Node
     
-    typedef node* link;
-    typedef int size_t;
     
+    typedef node* link;
+    typedef T value_type;
+    //typedef int size_t;
     node* head;
     node* tail;
-    size_t listSize;
+    int listSize;
     
     
     link getNodeContaining(int index) {
@@ -48,6 +49,7 @@ namespace cop3530 {
     
   public:
       
+      typedef std::size_t size_t;
       
     //=======================================================
     //NON CONST ITER    NON CONST ITER    NON CONST ITER
@@ -73,14 +75,21 @@ namespace cop3530 {
               node* here;
 
             public:
-              explicit SSLL_Iter( node* start) : here( start ) {}
+              explicit SSLL_Iter( node* start) {
+                  if(start == nullptr) {
+                      throw std::invalid_argument("The node pointer must be a valid argument of the list");
+                  }
+                  else {
+                      here=start;
+                  }
+              }
               SSLL_Iter( const SSLL_Iter& src ) : here( src.here ) {}
               
               reference operator*() const {
                   return here->data;
               }
               pointer operator->() const {
-                  return here;                  //TODO
+                  return here->data;                  //TODO
               }
 
               self_reference operator=( const SSLL_Iter& src ) {
@@ -88,27 +97,17 @@ namespace cop3530 {
               }
 
               self_reference operator++() {     //pre-increment
-            
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
                         // node* temp = here;
                          here=here->next;           //TODO
                          return *this;
-                      }
               }
               
               self_type operator++(int) {       // post-increment
-                  
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         node* temp = here;
-                         here=here->next;           //TODO
-                         return *temp;
-                      }
+                         SSLL_Iter * retval = new SSLL_Iter(*this);
+                         here=here->next;
+                         SSLL_Iter t = *retval;
+                         delete retval;
+                         return t;
               }
 
               bool operator==(const SSLL_Iter& rhs) const {
@@ -150,7 +149,14 @@ namespace cop3530 {
               const node* here;
 
             public:
-              explicit SSLL_Const_Iter( node* start) : here( start ) {}
+              explicit SSLL_Const_Iter( node* start) {
+                  if(start == nullptr) {
+                      throw std::invalid_argument("The node pointer must be a valid argument of the list");
+                  }
+                  else {
+                      here=start;
+                  }
+              }
               SSLL_Const_Iter( const SSLL_Const_Iter& src ) : here( src.here ) {}
               
               reference operator*() const {
@@ -165,27 +171,17 @@ namespace cop3530 {
               }
 
               self_reference operator++() {     //pre-increment
-            
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
                         // node* temp = here;
                          here=here->next;           //TODO
                          return *this;
-                      }
               }
               
               self_reference operator++(int) {       // post-increment
-                  
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         SSLL_Const_Iter * temp=new SSLL_Const_Iter(*this);
-                         here=here->next;           //TODO
-                         return *temp;
-                      }
+                         SSLL_Const_Iter * retval = new SSLL_Const_Iter(*this);
+                         here=here->next;
+                         SSLL_Const_Iter t = *retval;
+                         delete retval;
+                         return t;
               }
 
               bool operator==(const SSLL_Const_Iter& rhs) const {
@@ -201,7 +197,9 @@ namespace cop3530 {
               }
      };
      
+     typedef SSLL_Iter iterator;
      
+     typedef SSLL_Const_Iter const_iterator;
   
     //==============================================================
     //          Constructors/destructor/assignment operator
@@ -263,7 +261,7 @@ namespace cop3530 {
     }
     
     SSLL_Iter end() {
-        return SSLL_Iter(tail);
+        return SSLL_Iter(tail->next);
     }
     
     SSLL_Const_Iter begin() const {
@@ -271,7 +269,7 @@ namespace cop3530 {
     }
     
     SSLL_Const_Iter end() const {
-        return SSLL_Const_Iter(tail);
+        return SSLL_Const_Iter(tail->next);
     }
     
     T& operator[](int i) { 
