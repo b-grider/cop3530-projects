@@ -66,7 +66,9 @@ TEST_CASE( "Testing the operator=() and item_at() (SDAL)", "[operator=(), item_a
     for(int i=0; i<151; i++) {
         List1.push_back(i);
     }
-   
+    
+    //int check = List1.item_at(3);
+    
     REQUIRE(List1.item_at(3)==3);
     REQUIRE(List1.item_at(31)==31);
     REQUIRE(List1.item_at(111)==111);

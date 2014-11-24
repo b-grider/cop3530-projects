@@ -148,9 +148,11 @@ class CDAL {
              };
              
              
+    typedef int size_t;
+             
     node* head;
     node* tail;
-    int totalSize;
+    size_t totalSize;
     int numberOfNodes;
     
     
@@ -429,9 +431,28 @@ class CDAL {
      CDAL_Const_Iter end() const {
          return CDAL_Const_Iter(tail, (tail->nodeListSize-1));
      }
+     
+     
+    /*T& operator[](int i) { 
+        //— returns a reference to the indexed element
+    }
+    
+    T const& operator[](int i) const { 
+       //— returns an immutable reference to the indexed element
+       
+    }*/
+     
         
     T replace( const T& element, int position ) {
-    
+        if(totalSize==0) {
+               throw std::out_of_range("This is an empty CDAL");
+          }
+        else if(position < 0) {
+              throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+         }
+        else if(position >= totalSize) {
+             throw std::out_of_range("A valid index must be < list size");
+         }
         node* nodeToInsert = this->getNodeContaining(position);
         T retval = nodeToInsert->replace(element, position%50);
         
@@ -442,11 +463,13 @@ class CDAL {
         
         
     void insert( const T& element, int position ) {
-        try {
-            if ((position>totalSize) || (position<0)) {
-                throw std::invalid_argument("Position to insert on must be >=0 and < list size.");
-            }
-            if(this->is_empty()) {
+            if(position < 0) {
+                  throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+             }
+            else if(position > totalSize) {
+                 throw std::out_of_range("A valid index must be < list size");
+             }
+            else if(this->is_empty()) {
                 this->appendNode();
                 head->insert(element, 0);
                 totalSize++;
@@ -466,10 +489,6 @@ class CDAL {
                 }
             }
         
-        } catch(std::invalid_argument a) {
-            std::cout << a.what() << std::endl;
-        }
-        
     }
     
     //adds the specified element to the list at the specified position, shifting the element originally at that and those in subsequent positions one position to the ”right.“
@@ -487,29 +506,41 @@ class CDAL {
     //appends the specified element to the list.
     
    T pop_front() {
-       T retval=this->item_at(0);
-       this->remove(0);
-       return retval;
+       if(totalSize==0) {
+               throw std::length_error("This is an empty CDAL");
+          }
+       else {
+           T retval=this->item_at(0);
+           this->remove(0);
+           return retval;
+       }
     }
 
     //removes and returns the element at the list's head.
     
    T pop_back() {
-      // T retval=this->item_at(totalSize);
-       T retval=this->remove(totalSize-1);
-       return retval;
+       if(totalSize==0) {
+               throw std::length_error("This is an empty CDAL");
+          }
+       else {
+           T retval=this->remove(totalSize-1);
+           return retval;
+       }
     }
 
     //removes and returns the element at the list's tail.
     
    T remove( int position ) {
        T retval;
-            if(position < 0) {
-                  throw std::invalid_argument("A valid item_at(index) index is between 0 and list size, inclusive.");
-              }
+              if(totalSize==0) {
+                   throw std::out_of_range("This is an empty CDAL");
+                }
+              else if(position < 0) {
+                    throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+               }
               else if(position >= totalSize) {
-                  throw std::out_of_range("Element index must be in [0,listSize] range, inclusive.");
-              }
+                   throw std::out_of_range("A valid index must be < list size");
+               }
               else {
                 node* nodeToRemoveFrom=this->getNodeContaining(position);
                 retval = nodeToRemoveFrom->remove(position%50);
@@ -521,8 +552,6 @@ class CDAL {
     //removes and returns the the element at the specified position, shifting the subsequent elements one position to the ”left.“
     
  T item_at( int position ) const {
-       
-     try {
          if(position < 0) {
              throw std::invalid_argument("A valid item_at(index) index is between 0 and list size, inclusive.");
          }
@@ -535,12 +564,6 @@ class CDAL {
               T retval=theNode->item_at(index);
               return retval;
             }
-        } catch(std::invalid_argument a) {
-            std::cerr << "invalid argument error: " << a.what() << std::endl;
-        } catch(std::out_of_range o) {
-            std::cerr << "Out of range error: " << o.what() << std::endl;
-        }
-       
     }
 
     //returns (without removing from the list) the element at the specified position.
@@ -556,7 +579,7 @@ class CDAL {
 
     //returns true IFF the list contains no elements.
     
-    int size() const {return totalSize;}
+    size_t size() const {return totalSize;}
 
     //returns the number of elements in the list.
     
@@ -588,22 +611,28 @@ class CDAL {
     //returns true IFF one of the elements of the list matches the specified element.
     
     std::ostream& print( std::ostream& out ) const {
-        node* temp=head;
+        if(is_empty()) {
+            out << "<empty list>";
+            return out;
+        }
+        else {
+            node* temp=head;
         
-        for(int i=0; i<(numberOfNodes-1); i++) {
-            for(int j=0; j<50;j++) {
-                out << temp->item_at(j) << " ";
+            for(int i=0; i<(numberOfNodes-1); i++) {
+                for(int j=0; j<50;j++) {
+                    out << temp->item_at(j) << " ";
+                }
+                temp=temp->next;
             }
-            temp=temp->next;
+
+            int finalSize=temp->nodeListSize;
+
+            for(int k=0; k<finalSize; k++) {
+                out << temp->item_at(k) << " ";
+            }
+
+            return out;
         }
-        
-        int finalSize=temp->nodeListSize;
-        
-        for(int k=0; k<finalSize; k++) {
-            out << temp->item_at(k) << " ";
-        }
-            
-        return out;
     }
     
     //If the list is empty, inserts "<empty list>" into the ostream; otherwise, inserts, enclosed in square brackets, the list's elements, separated by commas, in sequential order.

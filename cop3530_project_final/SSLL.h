@@ -31,10 +31,20 @@ namespace cop3530 {
     }; // end struct Node
     
     typedef node* link;
+    typedef int size_t;
     
     node* head;
     node* tail;
-    int listSize;
+    size_t listSize;
+    
+    
+    link getNodeContaining(int index) {
+        link temp = head;
+        while(index!=0) {
+            temp=temp->next;
+            index--;
+        }
+    }
     
   public:
       
@@ -112,6 +122,7 @@ namespace cop3530 {
                   return (this->here!=rhs.here);
                   
               }
+              
      };
      
      
@@ -263,10 +274,48 @@ namespace cop3530 {
         return SSLL_Const_Iter(tail);
     }
     
+    T& operator[](int i) { 
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(i < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(i >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else {
+            link temp = this->getNodeContaining(i);
+            return &(temp->data);
+        }
+    }
+    
+    T const& operator[](int i) const { 
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(i < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(i >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else {
+            link temp = this->getNodeContaining(i);
+            T const& retval = &(temp->data);
+            return retval;
+        }
+    }
 
     T replace( const T& element, int position ) {
-        if(position < 0 || position >= listSize) {
-            std::cout << "enter valid position" << std::endl;
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
         }
         else {
             link x = head;
@@ -283,8 +332,11 @@ namespace cop3530 {
     //replaces the existing element at the specified position with the specified element and returns the original element.
     
     void insert( const T& element, int position ) {
-        if((position <0) || (position > listSize)) {
-            throw std::out_of_range("The valid indices to insert on are on the interval [0, listSize]");
+        if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position > listSize) {
+            throw std::out_of_range("A valid index must be < list size");
         }
         if((position==0) && (listSize==0)) {
             head=new node();
@@ -351,20 +403,25 @@ namespace cop3530 {
     //appends the specified element to the list.
     
     T pop_front() {
-        T retval;
-        link x = head;
-        head=head->next;
-        retval = x->data;
-        delete x; listSize--;
-        return retval;
+        if(this->is_empty()) {                           //TODO exceptions
+                throw std::length_error("This is already an empty list");
+            }
+        else {
+             T retval;
+            link x = head;
+            head=head->next;
+            retval = x->data;
+            delete x; listSize--;
+            return retval;
+        }
     }
 
     //removes and returns the element at the list's head.
     
     T pop_back() {
        // try {
-            if(head == nullptr) {
-                std::cout << "Empty list!" << std::endl;
+            if(this->is_empty()) {                           //TODO exceptions
+                throw std::length_error("This is already an empty list");
             }
             else {
             link x=head;
@@ -385,47 +442,48 @@ namespace cop3530 {
     //removes and returns the element at the list's tail.
     
     T remove( int position ) {
-        if(position==0) {
-            this->pop_front();
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else if(position==0) {
+           return this->pop_front();
         }
         else if(position==(listSize-1)) {
-            this->pop_back();
+            return this->pop_back();
         }
-        else if((position>0) && (position<(listSize-1))) {
-            if(this->is_empty()) {
-                throw std::invalid_argument("This is an empty list silly.");
-            }
-            else {
-                link x=head;
+        else {
+           link x=head;
+           
                 while(position!=1) {
                     x=x->next; position--;
                 }
-                link y=x->next;                //now x is at the node before the designated node
-                x->next=x->next->next;
-                T retval=y->data;
+           
+           link y=x->next;                //now x is at the node before the designated node
+           x->next=x->next->next;
+           T retval=y->data;
                 /*head=x;*/ listSize--;
-                delete y; x=nullptr;
-                return retval;
-            }
-        }
-        
+           delete y; x=nullptr;
+           return retval;
+          } 
     }
 
     //removes and returns the the element at the specified position, shifting the subsequent elements one position to the ”left.“
     
     T item_at( int position ) const {
-        if(position <= 0) {
-            if((listSize>=1) && (position==0)) {
-                return head->data;
-            }
-            else {
-                if(position < 0) {
-                    throw std::invalid_argument("The position must be >=0 to be valid");
-                }
-                else {
-                    throw std::out_of_range("The specified index is out of the range of this list's values");
-                }
-            }
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
         }
         else {
             link x=head;
@@ -449,7 +507,7 @@ namespace cop3530 {
 
     //returns true IFF the list contains no elements.
     
-    int size() const {return listSize;}
+    size_t size() const {return listSize;}
 
     //returns the number of elements in the list.
     
@@ -479,14 +537,20 @@ namespace cop3530 {
     //returns true IFF one of the elements of the list matches the specified element.
     
     std::ostream& print( std::ostream& out ) const {
-        link x = head;
-        while(x!=nullptr) {
-            out << x->data << " ";              //TODO override << operator for T?
-            x=x->next;
+        if(this->is_empty()) {
+            out << "<empty list>";
+            return out;
         }
+        else {
+            link x = head;
+            while(x!=nullptr) {
+                 out << x->data << " ";              //TODO override << operator for T?
+                 x=x->next;
+            }
        // out << "asldcbasdkj";
         
         return out;
+        }
     }
     
     //If the list is empty, inserts "<empty list>" into the ostream; otherwise, inserts, enclosed in square brackets, the list's elements, separated by commas, in sequential order.

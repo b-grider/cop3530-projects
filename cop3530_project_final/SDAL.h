@@ -18,6 +18,8 @@ namespace cop3530 {
     template<typename T>
     class SDAL {
 
+        typedef int size_t;
+        
         double listSize;
         double arraySize;
         T* head;
@@ -248,6 +250,7 @@ namespace cop3530 {
                 }
                 for(int i=0; i<src.size(); i++) {
                     data[i]=src.item_at(i);
+                    listSize++;
                 }
             }
 
@@ -275,6 +278,17 @@ namespace cop3530 {
                 return SDAL_Const_Iter(this->listSize-1);
             }
 
+             
+            /*T& operator[](int i) { 
+            //— returns a reference to the indexed element
+            }
+    
+            T const& operator[](int i) const { 
+             //— returns an immutable reference to the indexed element
+       
+             }*/
+             
+             
             int getArraySize() const {
                 return arraySize;
             }
@@ -287,15 +301,30 @@ namespace cop3530 {
             }
 
             T replace( T item, int position ) {
+                
+              if(this->is_empty()) {
+                    throw std::out_of_range("This is an empty SDAL");
+                }
+              else if(position < 0) {
+                    throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+                }
+              else if(position >= listSize) {
+                    throw std::out_of_range("A valid index must be < list size");
+                }
+              else {
                 T retval = this->item_at(position);
                 data[position] = item;
                 return retval;
+              }
             }                    //just remove then insert, right?
 
             void insert( T element, int position ) {  
-                       if((position<0) || (position > listSize)) {
-                           throw std::invalid_argument("Position must be >= 0 and < the list size");
-                       }
+                        if(position < 0) {
+                            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+                        }
+                        else if(position > listSize) {
+                            throw std::out_of_range("A valid index must be < list size");
+                        }
                        else if(listSize==arraySize) {                  //check if we need to make bigger.
                            this->makeBigger(arraySize*1.5);
                            this->shiftRight(position);  //shiftRight will increase listSize; don't worry about it
@@ -324,8 +353,14 @@ namespace cop3530 {
 
            T remove(int position) {
                T retval;
-                    if((position<0) || (position>listSize)) {
-                        throw std::invalid_argument("position must be >= 0 and <= list size.");
+                    if(this->is_empty()) {
+                        throw std::out_of_range("This is an empty SDAL");
+                    }
+                    else if(position < 0) {
+                        throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+                    }
+                    else if(position >= listSize) {
+                        throw std::out_of_range("A valid index must be < list size");
                     }
                     else {
                         retval=data[position];
@@ -338,17 +373,34 @@ namespace cop3530 {
             }
 
            T pop_back() {
+               if(this->is_empty()) {
+                    throw std::length_error("This is an empty SDAL");
+                }
                return this->remove(listSize-1);
                //listSize--;
            }
 
            T pop_front() {
+               if(this->is_empty()) {
+                    throw std::length_error("This is an empty SDAL");
+                }
                return this->remove(0);
            }
 
             T item_at(int position) const {
-                int tempInt = data[position];
-                return tempInt;
+                if(listSize==0) {
+                      throw std::out_of_range("This is an empty SDAL");
+                  }
+                if(position < 0) {
+                      throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+                  }
+                else if(position >= listSize) {
+                      throw std::out_of_range("A valid index must be < list size");
+                  }
+                else {
+                    int tempInt = data[position];
+                    return tempInt;
+                }
             }
 
            bool is_empty() {
@@ -362,8 +414,8 @@ namespace cop3530 {
                 return retval;
             }
 
-           int size() const {
-                return listSize;
+           size_t size() const {
+                return (size_t) listSize;
             }
         
            void clear() {
@@ -384,12 +436,19 @@ namespace cop3530 {
             }
 
             std::ostream& print(std::ostream& out) {
-                int i=0;
-                while(i<listSize) {
-                    out << data[i] << " ";
-                    i++;
+                if(this->is_empty()) {
+                    out << "<empty list>";
+                    return out;
                 }
+                else {
+                    int i=0;
+                        while(i<listSize) {
+                            out << data[i] << " ";
+                            i++;
+                        }
                 return out;
+                }
+                
             }
     };
 }

@@ -25,10 +25,11 @@ class PSLL {
     };
     
     typedef node* link;
+    typedef int size_t;
     
     node* listHead;
     node* listTail;         //List members
-    int listSize;
+    size_t listSize;
     
     link x;                 //global link for conducting list operations. This will be for strictly utility purposes.
     
@@ -53,7 +54,7 @@ class PSLL {
         }
      }
     
-    void appendFree(link a) {
+    void appendFree(link a) {               //appends a node to the free list at head.
         if(freeSize==0) {
             freeHead=a; freeSize++;
         }
@@ -62,6 +63,13 @@ class PSLL {
             freeHead=a; freeSize++;
         }
         
+    }
+    
+    link getFreeNode() {
+        link x = freeHead;
+        freeHead = freeHead->next;
+        x->next = nullptr;
+        return x;
     }
     
     link getNodeptr(int index) {
@@ -278,6 +286,17 @@ class PSLL {
      //     PUBLIC MEMBER FUNCTIONS     PUBLIC MEMBER FUNCTIONS
      //=========================================================================
      
+     
+       /* T& operator[](int i) { 
+            //— returns a reference to the indexed element
+            
+        }
+    
+        T const& operator[](int i) const { 
+            //— returns an immutable reference to the indexed element
+       
+        }*/
+     
         
         void testFreeNodes(int a, int b) {
             freeNodes(a,b);
@@ -350,12 +369,14 @@ class PSLL {
         
         
     T replace( const T& element, int position ) {
-        if(position < 0 || position >= listSize) {
-            std::cout << "enter valid position" << std::endl;
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty PSLL");
         }
-        else if(this->is_empty()) {
-            std::cout << "No item to replace" << std::endl;
-            this->push_front(element);
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
         }
         else {
             
@@ -373,19 +394,32 @@ class PSLL {
     //replaces the existing element at the specified position with the specified element and returns the original element.
     
    void insert( const T& element, int position ) {
-        if((position <0) || (position > listSize)) {
-            throw std::out_of_range("The valid indices to insert on are on the interval [0, listSize]");
+        if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position > listSize) {
+            throw std::out_of_range("A valid index must be < list size");
         }
         else if(position==listSize) {
             if(listSize==0) {
-                listHead=new node();
+                    if(freeHead != nullptr) {
+                        listHead = getFreeNode();
+                    }
+                    else {
+                        listHead=new node();
+                    }
                 listHead->data=element;
                 listTail=listHead;
                 listSize++;
                 return;
             }
             else {
-                listTail->next=new node();
+                    if(freeHead != nullptr) {
+                        listTail->next = getFreeNode();
+                    }
+                    else {
+                        listTail->next = new node();
+                    }
                 listTail=listTail->next;
                 listTail->data=element;
                 listSize++;
@@ -398,7 +432,13 @@ class PSLL {
                 x=x->next;
                 position--;
             }
-            link y=new node();
+            link y;
+                if(freeHead != nullptr) {
+                     y = getFreeNode();
+                 }
+                 else {
+                     y = new node();
+                 }
             y->data=element; 
             y->next=x->next;
             x->next=y; y=nullptr; 
@@ -406,6 +446,41 @@ class PSLL {
             return;
         }
     }
+   
+   /*void insertRevamp(const T& element, int position) {
+       if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position > listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+       if(freeHead != nullptr) {        //there are free nodes available
+           link x = getFreeNode();      //use one of the pre-allocated nodes
+           x->data=element;
+           if(listHead == nullptr) {
+               listHead = x; listTail=x;
+               listSize++;
+           }
+           else {
+               listTail->next = x;
+               listTail=listTail->next;
+               listSize++; freeSize--;
+           }
+       }
+       else {                           //we will have to allocate new nodes
+           link x = new node;
+           x->data=element;
+           if(listHead == nullptr) {
+               listHead = x; listTail=x;
+               listSize++;
+           }
+           else {
+               listTail->next = x;
+               listTail=listTail->next;
+               listSize++; freeSize--;
+           }
+       }
+   }*/
     
     //adds the specified element to the list at the specified position, shifting the element originally at that and those in subsequent positions one position to the ”right.“
     
@@ -472,6 +547,9 @@ class PSLL {
     //appends the specified element to the list.
     
     T pop_front() {
+        if(this->is_empty()) {
+            throw std::length_error("This is an empty PSLL");
+        }
         T retval;
         x = listHead;
         listHead=listHead->next;
@@ -483,63 +561,73 @@ class PSLL {
     //removes and returns the element at the list's head.
     
     T pop_back() {
-        // try {
-            if(listHead == nullptr) {
-                std::cout << "Empty list!" << std::endl;
-            }
-            else {
-            x=listHead;
-            while(x->next!=listTail) {
-                x=x->next;
-            }
-             T retval=x->next->data;                   //x is now the element before the tail element. EXCEPTION
-             x->next=nullptr; listSize--;
-             listTail->next=freeHead; freeHead=listTail;    //appending node being popped to free list. It is now freeHead.
-             listTail=x; freeSize++;
-             return retval;
-            }
-       /* }*/ /*catch(...) {
-            
-        }*/
+       if(this->is_empty()) {
+            throw std::length_error("This is an empty PSLL");
+        }
+        else {
+          x=listHead;
+           while(x->next!=listTail) {
+               x=x->next;
+           }
+          T retval=x->next->data;                   //x is now the element before the tail element. EXCEPTION
+          link y = x->next;
+          x->next=nullptr; listSize--;
+          appendFree(y);    //appending node being popped to free list. It is now freeHead.
+          listTail=x; freeSize++;
+          return retval;
+        }
     }
 
     //removes and returns the element at the list's tail.
     
     T remove( int position ) {
-         if(position==0) {
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty PSLL");
+        }
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else if(position==0) {
             this->pop_front();
         }
         else if(position==(listSize-1)) {
             this->pop_back();
         }
-        else if((position>0) && (position<(listSize-1))) {
-            if(this->is_empty()) {
-                throw std::invalid_argument("This is an empty list silly.");
-            }
-            else {
-                link x=listHead;
+        else {
+            link x=listHead;
+            
                 while(position!=1) {
                     x=x->next; position--;
                 }
-                link y=x->next;                //now x is at the node before the designated node
-                x->next=x->next->next;
-                T retval=y->data;
-                /*head=x;*/ listSize--;
-                delete y; x=nullptr;
-                return retval;
+            
+            link y=x->next;                //now x is at the node before the designated node
+            x->next=x->next->next;
+            T retval=y->data;
+            /*head=x;*/ listSize--;
+            appendFree(y); x=nullptr;
+            return retval;
             }
-        }
+       
     }
 
     //removes and returns the the element at the specified position, shifting the subsequent elements one position to the ”left.“
     
     T item_at( int position ) const {
-        if(position <= 0) {
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty PSLL");
+        }
+        else if(position < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(position >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else if(position == 0) {
             if((listSize>=1) && (position==0)) {
                 return listHead->data;
-            }
-            else {
-                std::cout << "Cannot be done, list is empty or position < 0" << std::endl;
             }
         }
         else if(position >= listSize) {
@@ -571,7 +659,7 @@ class PSLL {
 
     //returns true IFF the list contains no elements.
     
-    int size() const {
+    size_t size() const {
         return listSize;
     }
 
@@ -619,25 +707,31 @@ class PSLL {
  }
     
     bool contains( const T& element, bool equals( const T& a, const T& b  ) ) const {
-     
+        bool retval = true;
         for(int i=0; i<listSize; i++) {
-            if(equals(this->item_at(i), element)) {
-                return true;
+            if(!equals(this->item_at(i), element)) {
+                retval = false;
             }
         }
-        return false;
+        return retval;
         
     }
 
     //returns true IFF one of the elements of the list matches the specified element.
     
     std::ostream& print( std::ostream& out ) const {
-        link x = listHead;
-        while(x!=nullptr) {
-            out << x->data << " ";              //TODO override << operator for T?
-            x=x->next;
-    }
-        return out;
+        if(this->is_empty()) {
+            out << "<empty list>";
+            return out;
+        }
+        else {
+            link x = listHead;
+                while(x!=nullptr) {
+                    out << x->data << " ";              //TODO override << operator for T?
+                    x=x->next;
+                }
+            return out;
+        }
     }
     
     //If the list is empty, inserts "<empty list>" into the ostream; otherwise, inserts, enclosed in square brackets, the list's elements, separated by commas, in sequential order.
