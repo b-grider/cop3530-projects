@@ -315,8 +315,14 @@ class CDAL {
                           throw std::out_of_range("You're already at the end of the list.");
                       }
                       else {
-                         node* temp = here;
-                         here=here->next;           //TODO
+                         CDAL_Iter* temp = new CDAL_Iter(*this);
+                         if(index == 49) {
+                             index = 0;
+                             here=here->next;
+                         }
+                         else {
+                             index++;
+                         }           
                          return *temp;
                       }
               }
@@ -365,7 +371,7 @@ class CDAL {
               CDAL_Const_Iter( const CDAL_Const_Iter& src ) : here( src.here ) {}
               
               reference operator*() const {
-                  return here->data;
+                  return here->data[index];
               }
               pointer operator->() const {
                   return here;
@@ -393,7 +399,7 @@ class CDAL {
                           throw std::out_of_range("You're already at the end of the list.");
                       }
                       else {
-                         node* temp = here;
+                         CDAL_Const_Iter* temp = new CDAL_Const_Iter(*this);
                          here=here->next;           //TODO
                          return *temp;
                       }
@@ -589,13 +595,14 @@ class CDAL {
        
        node* temp=head;
           
-          while(temp!=nullptr) {
+          while(temp->next!=nullptr) {
               head=temp->next;
-              delete [] temp;
+              delete temp;
               temp=head;
           }
-       head=nullptr; tail=nullptr;
-       totalSize=0; numberOfNodes=0;
+       tail=head;
+       head->nodeListSize=0;
+       totalSize=0; numberOfNodes=1;
     }    
 
     //removes all elements from the list.
@@ -619,19 +626,21 @@ class CDAL {
         }
         else {
             node* temp=head;
-        
-            for(int i=0; i<(numberOfNodes-1); i++) {
+            
+            out << "{";
+            /*for(int i=0; i<(numberOfNodes-1); i++) {
                 for(int j=0; j<50;j++) {
                     out << temp->item_at(j) << " ";
                 }
                 temp=temp->next;
             }
-
+             */
             int finalSize=temp->nodeListSize;
 
             for(int k=0; k<finalSize; k++) {
                 out << temp->item_at(k) << " ";
             }
+            out << "}";
 
             return out;
         }

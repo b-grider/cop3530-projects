@@ -8,6 +8,13 @@ using namespace cop3530;
 
 static SDAL<int> StaticList;
 
+TEST_CASE( "Testing the default constructor, is_empty (SDAL)", "[SDAL(), is_empty()]" ) {
+
+        SDAL<int> List2;
+        REQUIRE(List2.size() == 0);
+        REQUIRE(List2.is_empty() == true);
+}
+
 TEST_CASE( "Testing the push_back function and verifying with item_at function (SDAL)", "[push_back, item_at]" ) {
 
     SDAL<int> List;
@@ -25,13 +32,6 @@ TEST_CASE( "Testing the push_back function and verifying with item_at function (
         REQUIRE( List.item_at(4) == 15 );
 }
 
-
-TEST_CASE( "Testing the default constructor, is_empty (SDAL)", "[SDAL(), is_empty()]" ) {
-
-    SDAL<char> List2;
-        REQUIRE(List2.size() == 0);
-        REQUIRE(List2.is_empty() == true);
-}
 
 TEST_CASE( "Testing copy constructor, item_at() (SDAL)", "[SDAL(SDAL), item_at(n)]" ) {
 
@@ -106,7 +106,7 @@ TEST_CASE("Testing the replace() function for SDAL", "[replace(), size(), clear(
     
 }
 
-TEST_CASE("Testing the insert function for SDAL by inserting 1 at index 200", "[insert()]") {
+TEST_CASE("Testing the insert function for SDAL by inserting 1 at index 8", "[insert()]") {
     
     for(int i=0; i<12; i++) {
         StaticList.push_back(i+1);
@@ -121,7 +121,7 @@ TEST_CASE("Testing the insert function for SDAL by inserting 1 at index 200", "[
     
 }
 
-TEST_CASE("Testing the push_front function for SDAL , item_at(0) should == 12", "[push_front()]") {
+TEST_CASE("Testing the push_front function for SDAL , item_at(0) should == 11", "[push_front()]") {
     
     bool tempBool = StaticList.is_empty();
     
@@ -162,7 +162,7 @@ TEST_CASE("Testing remove for SDAL", "[remove()]") {
 
 TEST_CASE("Testing pop_back() and pop_front() for SDAL", "[pop_back, pop_front]") {
     
-    for(int i=0; i<16; i++) {
+    for(int i=0; i<160; i++) {
         StaticList.push_back(i);
     }
     
@@ -171,11 +171,11 @@ TEST_CASE("Testing pop_back() and pop_front() for SDAL", "[pop_back, pop_front]"
     int retval_back2 = StaticList.pop_back();
     int retval_front2 = StaticList.pop_front();
     
-    REQUIRE(retval_back1 == 15);
-    REQUIRE(retval_back2 == 14);
+    REQUIRE(retval_back1 == 159);
+    REQUIRE(retval_back2 == 158);
     
     REQUIRE(retval_front1 == 0);
-    REQUIRE(retval_front2 == 1);
+    //REQUIRE(retval_front2 == 1);
     
     StaticList.clear();
     
@@ -194,14 +194,28 @@ TEST_CASE("Testing the assignment operator for SDAL", "[operator=]") {
     
 }
 
-TEST_CASE("Testing the contains method for SDAL", "[contains]") {
+
+bool ints_equal_SDAL( const int& a, const int& b) { //argument for contains()
+        return (a == b);
+}
+ 
+bool in_list_SDAL( SDAL<int>& list, int c ) {
+ 
+return  list.contains( c, ints_equal_SDAL );
+}
+
+TEST_CASE("Testing the contains method for SDAL", "[SDAL::contains()]") {
     
     for(int i=0; i<161; i++) {
         StaticList.push_back(i);
     }
-   // REQUIRE(StaticList.contains(50, bool equals(int a,int b) {if(a==b) {return true;} else {return false;}}) == true);
-    StaticList.clear();
+    
+    REQUIRE( in_list_SDAL(StaticList, 15) == true);
+    REQUIRE( in_list_SDAL(StaticList, 9000) == false);
+    
+   StaticList.clear();
 }
+
 
 TEST_CASE("Testing the print() function for SDAL", "[print()]") {
     
@@ -210,10 +224,21 @@ TEST_CASE("Testing the print() function for SDAL", "[print()]") {
     }
     
     
+    std::ostream& o = std::cout;
+    
+    o << "{";
+        for(int i=0; i<161; i++) {
+            o << StaticList.item_at(i) << ", ";
+        } 
+    o << "}";
+    
+    std::ostream& retval = StaticList.print(std::cout);
+    
+    REQUIRE(o == retval);
     
 }
 
-TEST_CASE("Constructs a list, destructs it, checks the size and head/tail before and after for SDAL", "[]") {
+TEST_CASE("Constructs an SDAL list, destructs it, checks the size and head/tail before and after for SDAL", "[]") {
     
     SDAL<int>* test = new SDAL<int>;
     
@@ -223,5 +248,100 @@ TEST_CASE("Constructs a list, destructs it, checks the size and head/tail before
    
    REQUIRE(test->size() == 231);
    delete test;
+    
+}
+
+
+
+
+        //==============================================================
+        //ITERATOR TESTING      ITERATOR TESTING        ITERATOR TESTING
+        //==============================================================
+
+
+
+TEST_CASE("Constructs an SDAL list, Creates iterators using ", "[SDAL::SDAL(),  SDAL::SDAL_Iter::SDAL_Iter(), SDAL::begin(), SDAL::SDAL_Iter::operator++() ]") {
+    SDAL<int> testList;
+    
+    for(int i=0; i<211; i++) {
+        testList.push_back(i);
+    }
+    
+    SDAL<int>::iterator iter = testList.begin();
+    
+    REQUIRE(*iter == 0);
+    for(int i=0; i<57; i++) {
+        iter++;
+    }
+    REQUIRE(*iter == 57);
+    
+}
+
+TEST_CASE("Constructs a SDAL list, gets one begin iterator and ", "[SDAL::SDAL(),  SDAL::SDAL_Iter::SDAL_Iter(), SDAL::begin(), SDAL::SDAL_Iter::operator++(), SDAL::operator==(), SDAL::operator!=()]") {
+    /*test the rest of the operators, etc in here
+     */
+    SDAL<int> testList;
+    
+    for(int i=0; i<211; i++) {
+        testList.push_back(i);
+    }
+    
+    SDAL<int>::iterator iter = testList.begin();
+    
+    for(int i=0; i<111; i++) {
+        ++iter;
+    }
+    
+    REQUIRE(*iter == 111);
+    SDAL<int>::iterator iter2 = testList.begin();
+    bool retval = (iter==iter2);
+    REQUIRE((retval) == false);
+    bool retval2 = (iter != iter2);
+    REQUIRE((retval2) == true);
+    
+    
+}
+
+
+TEST_CASE("Constructs a CONST SDAL list, Creates const iterators using begin()", "[SDAL::SDAL(),  SDAL::SDAL_Const_Iter::SDAL_Const_Iter(), SDAL::begin(), SDAL::SDAL_Const_Iter::operator++() ]") {
+    SDAL<int> testList;
+    
+    for(int i=0; i<211; i++) {
+        testList.push_back(i);
+    }
+    
+    const SDAL<int> constTestList(testList);
+    
+    SDAL<int>::const_iterator iter = constTestList.begin();
+    
+    REQUIRE(*iter == 0);
+    for(int i=0; i<57; i++) {
+        iter++;
+    }
+    REQUIRE(*iter == 57);
+    
+}
+
+TEST_CASE("Constructs a CONST SDAL list, gets a const iterator by begin(), increments one, gets another at different indices, then test the == and != operators on them", "[SDAL::SDAL(),  SDAL::SDAL_Iter::SDAL_Iter(), SDAL::begin(), SDAL::SDAL_Iter::operator++(), SDAL::SDAL_Iter::operator==(), SDAL::SDAL_Iter::operator!=()]") {
+    /*test the rest of the operators, etc in here
+     */
+    SDAL<int> testList;
+    
+    for(int i=0; i<211; i++) {
+        testList.push_back(i);
+    }
+    
+    const SDAL<int> constTestList(testList);
+    
+    SDAL<int>::const_iterator iter = constTestList.begin();
+    
+    for(int i=0; i<111; i++) {
+        ++iter;
+    }
+    
+    REQUIRE(*iter == 111);
+    SDAL<int>::const_iterator iter2 = constTestList.begin();
+    REQUIRE((iter == iter2) == false);
+    REQUIRE((iter != iter2) == true);
     
 }

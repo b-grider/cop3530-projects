@@ -97,50 +97,46 @@ namespace cop3530 {
                   typedef SDAL_Iter& self_reference;
 
                 private:
-                  int here;
+                  pointer here;
+                  int offset;
 
                 public:
-                  explicit SDAL_Iter( int start) : here( start ) {}
-                  SDAL_Iter( const SDAL_Iter& src ) : here( src.here ) {}
+                  explicit SDAL_Iter( T* start, int off) : here( start ), offset(off) {}
+                  SDAL_Iter( const SDAL_Iter& src) : here( src.here ), offset(src.offset) {}
 
                   reference operator*() const {
-                      return data[here];
+                      return here[offset];
                   }
                   pointer operator->() const {
-                      return here;
+                      return here[offset];
                   }
 
                   self_reference operator=( const SDAL_Iter& src ) {
                        here=src.here;
+                       offset=src.offset;
                   }
 
                   self_reference operator++() {     //pre-increment
-                      if(here == &data[listSize-1]) {
-                          throw std::out_of_range("Cannot increment, you are at the end of the dynamic array.");
-                      }
-                      else {
-                        here++;
+                        offset++;
                         return *this;
-                      }
                   }
 
                   self_reference operator++(int) {       // post-increment
-                       if(here == &data[listSize-1]) {
-                          throw std::out_of_range("Cannot increment, you are at the end of the dynamic array.");
-                      }
-                      else {
                           SDAL_Iter* temp = new SDAL_Iter(*this);
-                          here++;
+                          offset++;
                           return *temp;
-                      } 
                   }
 
                   bool operator==(const SDAL_Iter& rhs) const {
-                      return (this->here==rhs.here);
+                      pointer temp = rhs.here;
+                      int count = rhs.offset;
+                      return ((&here[offset])== (&temp[count]));
                   }
 
                   bool operator!=(const SDAL_Iter& rhs) const {
-                     return (this->here!=rhs.here);
+                      pointer temp = rhs.here;
+                      int count = rhs.offset;
+                      return ((&here[offset])!= (&temp[count]));
                   }
          };
 
@@ -167,48 +163,46 @@ namespace cop3530 {
                   typedef SDAL_Const_Iter& self_reference;
 
                 private:
-                  const T* here;
+                    pointer here;
+                    int offset;
 
                 public:
-                  explicit SDAL_Const_Iter( T* start) : here( start ) {}
-                  SDAL_Const_Iter( const SDAL_Const_Iter& src ) : here( src.here ) {}
+                  explicit SDAL_Const_Iter( pointer point, int start ) : here( point ), offset( start ) {}
+                  SDAL_Const_Iter( const SDAL_Const_Iter& src ) : here( src.here ), offset(src.offset) {}
 
                   reference operator*() const {
-                      return *here;
+                      return here[offset];
                   }
                   pointer operator->() const {
-                      return here;
+                      return here[offset];
                   }
 
                   self_reference operator=( const SDAL_Const_Iter& src ) {
-                       here=src;
+                       here=src.here;
+                       offset=src.offset;
                   }
 
                   self_reference operator++() {     //pre-increment
-                      if(here == &data[listSize-1]) {
-                          throw std::out_of_range("Cannot increment, you are at the end of the list.");
-                      }
-                      here++;
+                      offset++;
                       return *this;
                   }
 
                   self_reference operator++(int) {       // post-increment
-                      if(here == &data[listSize-1]) {
-                          throw std::out_of_range("Cannot increment, you are at the end of the dynamic array.");
-                      }
-                      else {
                           SDAL_Const_Iter* temp = new SDAL_Const_Iter(*this);
-                          here++;
+                          offset++;
                           return *temp;
-                      }
                   }
 
                   bool operator==(const SDAL_Const_Iter& rhs) const {
-                      return (this->here==rhs.here);
+                      pointer temp = rhs.here;
+                      int count = rhs.offset;
+                      return ((&here[offset])== (&temp[count]));
                   }
 
                   bool operator!=(const SDAL_Const_Iter& rhs) const {
-                      return (this->here!=rhs.here);
+                      pointer temp = rhs.here;
+                      int count = rhs.offset;
+                      return ((&here[offset])!= (&temp[count]));
                   }
          };
 
@@ -217,7 +211,7 @@ namespace cop3530 {
             typedef T value_type;
             typedef std::size_t size_t;
             typedef SDAL_Iter iterator;
-            typedef SDAL_Const_Iter const_iterator;
+           typedef SDAL_Const_Iter const_iterator;
             
 
             SDAL() {
@@ -262,7 +256,7 @@ namespace cop3530 {
             }
 
             SDAL_Iter begin() {
-                return SDAL_Iter(0);
+                return SDAL_Iter(&data[0], 0);
             }
 
              SDAL_Iter end() {
@@ -270,19 +264,15 @@ namespace cop3530 {
                 /* for(int i=0; i<listSize-1;i++) {
                      arg++;
                  }*/
-                return SDAL_Iter(this->listSize-1);
+                return SDAL_Iter(&data[listSize], 0);
             }
 
              SDAL_Const_Iter begin() const {
-                return SDAL_Const_Iter(0);
+                return SDAL_Const_Iter(&data[0], 0);
             }
 
              SDAL_Const_Iter end() const {
-                // T* arg = head;
-                /* for(int i=0; i<listSize-1;i++) {
-                     arg++;
-                 }*/
-                return SDAL_Const_Iter(this->listSize-1);
+                 return SDAL_Const_Iter(&data[listSize], 0);
             }
 
              
@@ -449,10 +439,12 @@ namespace cop3530 {
                 }
                 else {
                     int i=0;
+                    out << "{";
                         while(i<listSize) {
                             out << data[i] << " ";
                             i++;
                         }
+                    out << "}";
                 return out;
                 }
                 

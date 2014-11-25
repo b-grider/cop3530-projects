@@ -33,7 +33,6 @@ namespace cop3530 {
     
     typedef node* link;
     typedef T value_type;
-    //typedef int size_t;
     node* head;
     node* tail;
     int listSize;
@@ -198,7 +197,6 @@ namespace cop3530 {
      };
      
      typedef SSLL_Iter iterator;
-     
      typedef SSLL_Const_Iter const_iterator;
   
     //==============================================================
@@ -541,10 +539,11 @@ namespace cop3530 {
         }
         else {
             link x = head;
+            out << "{";
             while(x!=nullptr) {
-                 out << x->data << " ";              //TODO override << operator for T?
+                 out << x->data << "," << " ";              //TODO override << operator for T?
                  x=x->next;
-            }
+            } out << "}";
        // out << "asldcbasdkj";
         
         return out;

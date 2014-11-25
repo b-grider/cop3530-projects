@@ -134,12 +134,12 @@ class PSLL {
         }
         
         
-        //======================================================================
-        //      ITERATORS        ITERATORS           ITERATORS
-        //======================================================================
-        
-        
-       class PSLL_Iter { //: public std::iterator<std::forward_iterator_tag, T>
+     //=======================================================
+    //NON CONST ITER    NON CONST ITER    NON CONST ITER
+    //=======================================================
+      
+      
+      class PSLL_Iter { //: public std::iterator<std::forward_iterator_tag, T>
             
             public:
               // inheriting from std::iterator<std::forward_iterator_tag, T>
@@ -158,42 +158,39 @@ class PSLL {
               node* here;
 
             public:
-              explicit PSLL_Iter( node* start) : here( start ) {}
+              explicit PSLL_Iter( node* start) {
+                  if(start == nullptr) {
+                      throw std::invalid_argument("The node pointer must be a valid argument of the list");
+                  }
+                  else {
+                      here=start;
+                  }
+              }
               PSLL_Iter( const PSLL_Iter& src ) : here( src.here ) {}
               
               reference operator*() const {
                   return here->data;
               }
               pointer operator->() const {
-                  return here;
+                  return here->data;                  //TODO
               }
 
               self_reference operator=( const PSLL_Iter& src ) {
-                   here=src;
+                   here=src.here;
               }
 
               self_reference operator++() {     //pre-increment
-            
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         node* temp = here;
+                        // node* temp = here;
                          here=here->next;           //TODO
                          return *this;
-                      }
               }
               
               self_type operator++(int) {       // post-increment
-                  
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         node* temp = here;
-                         here=here->next;           //TODO
-                         return *temp;
-                      }
+                         PSLL_Iter * retval = new PSLL_Iter(*this);
+                         here=here->next;
+                         PSLL_Iter t = *retval;
+                         delete retval;
+                         return t;
               }
 
               bool operator==(const PSLL_Iter& rhs) const {
@@ -204,12 +201,16 @@ class PSLL {
               
               bool operator!=(const PSLL_Iter& rhs) const {
                  
-                  return (here!=rhs.here);
+                  return (this->here!=rhs.here);
                   
               }
+              
      };
      
      
+     //===============================================================
+     //    CONST ITER PSLL       CONST ITER PSLL       CONST ITER PSLL
+     //===============================================================
      
      
      class PSLL_Const_Iter { //: public std::iterator<std::forward_iterator_tag, T>
@@ -219,8 +220,8 @@ class PSLL {
               // automagically sets up these typedefs...
               typedef T value_type;
               typedef std::ptrdiff_t difference_type;
-              typedef T& reference;
-              typedef T* pointer;
+              typedef const T& reference;
+              typedef const T* pointer;
               typedef std::forward_iterator_tag iterator_category;
 
               // but not these typedefs...
@@ -228,45 +229,42 @@ class PSLL {
               typedef PSLL_Const_Iter& self_reference;
 
             private:
-              node* here;
+              const node* here;
 
             public:
-              explicit PSLL_Const_Iter( node* start) : here( start ) {}
+              explicit PSLL_Const_Iter( node* start) {
+                  if(start == nullptr) {
+                      throw std::invalid_argument("The node pointer must be a valid argument of the list");
+                  }
+                  else {
+                      here=start;
+                  }
+              }
               PSLL_Const_Iter( const PSLL_Const_Iter& src ) : here( src.here ) {}
               
               reference operator*() const {
                   return here->data;
               }
               pointer operator->() const {
-                  return here;
+                  return here;                  //TODO
               }
 
               self_reference operator=( const PSLL_Const_Iter& src ) {
-                   here=src;
+                   here=src.here;
               }
 
               self_reference operator++() {     //pre-increment
-            
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         PSLL_Const_Iter* temp = new PSLL_Const_Iter(*this);
+                        // node* temp = here;
                          here=here->next;           //TODO
                          return *this;
-                      }
               }
               
-              self_type operator++(int) {       // post-increment
-                  
-                      if(here->next == nullptr) {
-                          throw std::out_of_range("You're already at the end of the list.");
-                      }
-                      else {
-                         PSLL_Const_Iter* temp = new PSLL_Const_Iter(*this);
-                         here=here->next;           //TODO
-                         return *temp;
-                      }
+              self_reference operator++(int) {       // post-increment
+                         PSLL_Const_Iter * retval = new PSLL_Const_Iter(*this);
+                         here=here->next;
+                         PSLL_Const_Iter t = *retval;
+                         delete retval;
+                         return t;
               }
 
               bool operator==(const PSLL_Const_Iter& rhs) const {
@@ -277,7 +275,7 @@ class PSLL {
               
               bool operator!=(const PSLL_Const_Iter& rhs) const {
                  
-                  return (here!=rhs.here);
+                  return (this->here!=rhs.here);
                   
               }
      };
@@ -303,6 +301,23 @@ class PSLL {
             //— returns an immutable reference to the indexed element
        
         }*/
+            
+        
+        PSLL_Iter begin() {
+            return PSLL_Iter(listHead);
+        }
+
+        PSLL_Iter end() {
+            return PSLL_Iter(listTail->next);
+        }
+
+        PSLL_Const_Iter begin() const {
+            return PSLL_Const_Iter(listHead);
+        }
+    
+        PSLL_Const_Iter end() const {
+            return PSLL_Const_Iter(listTail->next);
+        }
      
         
         void testFreeNodes(int a, int b) {
@@ -713,15 +728,14 @@ class PSLL {
     }
  }
     
-    bool contains( const T& element, bool equals( const T& a, const T& b  ) ) const {
-        bool retval = true;
+   bool contains( const T& element, bool equals( const T& a, const T& b  ) ) const {
+        
         for(int i=0; i<listSize; i++) {
-            if(!equals(this->item_at(i), element)) {
-                retval = false;
+            if(equals(this->item_at(i), element)) {
+                return true;
             }
         }
-        return retval;
-        
+        return false;
     }
 
     //returns true IFF one of the elements of the list matches the specified element.
@@ -733,10 +747,12 @@ class PSLL {
         }
         else {
             link x = listHead;
+            out << "{";
                 while(x!=nullptr) {
                     out << x->data << " ";              //TODO override << operator for T?
                     x=x->next;
                 }
+            out << "}";
             return out;
         }
     }
