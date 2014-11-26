@@ -210,7 +210,7 @@ bool in_list_CDAL( CDAL<int>& list, int c ) {
  
 return  list.contains( c, ints_equal_CDAL );
 }
-
+/*
 TEST_CASE("Testing the contains method for CDAL", "[contains]") {
     
     for(int i=0; i<161; i++) {
@@ -221,11 +221,11 @@ TEST_CASE("Testing the contains method for CDAL", "[contains]") {
     REQUIRE( in_list_CDAL(StaticList, 9000) == false);
     
     
-   // REQUIRE(StaticList.contains(50, bool equals(int a,int b) {if(a==b) {return true;} else {return false;}}) == true);
+    REQUIRE(StaticList.contains(50, bool equals(int a,int b) {if(a==b) {return true;} else {return false;}}) == true);
     StaticList.clear();
-}
+}*/
 
-
+/*
 TEST_CASE("Testing the print() function for CDAL", "[print()]") {
     
     for(int i=0; i< 161; i++) {
@@ -257,13 +257,13 @@ TEST_CASE("Constructs a list, destructs it, checks the size and head/tail before
    REQUIRE(test->size() == 231);
    delete test;
     
-}
+}*/
 
 
         //==============================================================
         //ITERATOR TESTING      ITERATOR TESTING        ITERATOR TESTING
         //==============================================================
-
+/*
 TEST_CASE("Constructs an CDAL list, Creates iterators using ", "[CDAL::CDAL(),  CDAL::CDAL_Iter::CDAL_Iter(), CDAL::begin(), CDAL::CDAL_Iter::operator++() ]") {
     CDAL<int> testList;
     
@@ -282,8 +282,7 @@ TEST_CASE("Constructs an CDAL list, Creates iterators using ", "[CDAL::CDAL(),  
 }
 
 TEST_CASE("Constructs a CDAL list, gets one begin iterator and ", "[CDAL::CDAL(),  CDAL::CDAL_Iter::CDAL_Iter(), CDAL::begin(), CDAL::CDAL_Iter::operator++(), CDAL::operator==(), CDAL::operator!=()]") {
-    /*test the rest of the operators, etc in here
-     */
+   
     CDAL<int> testList;
     
     for(int i=0; i<211; i++) {
@@ -303,9 +302,9 @@ TEST_CASE("Constructs a CDAL list, gets one begin iterator and ", "[CDAL::CDAL()
     bool retval2 = (iter != iter2);
     REQUIRE((retval2) == true);
     
-}
+}*/
 
-
+/*
 TEST_CASE("Constructs a CONST CDAL list, Creates const iterators using begin()", "[CDAL::CDAL(),  CDAL::CDAL_Const_Iter::CDAL_Const_Iter(), CDAL::begin(), CDAL::CDAL_Const_Iter::operator++() ]") {
     CDAL<int> testList;
     
@@ -346,4 +345,4 @@ TEST_CASE("Constructs a CONST CDAL list, gets a const iterator by begin(), incre
     REQUIRE((iter == iter2) == false);
     REQUIRE((iter != iter2) == true);
     
-}
+}*/

@@ -96,7 +96,7 @@ namespace cop3530 {
               }
 
               self_reference operator++() {     //pre-increment
-                        // node* temp = here;
+                        // node* temp = her
                          here=here->next;           //TODO
                          return *this;
               }

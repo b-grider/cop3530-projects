@@ -276,14 +276,14 @@ namespace cop3530 {
             }
 
              
-            /*T& operator[](int i) { 
-            //— returns a reference to the indexed element
+            T& operator[](int i) { 
+                return &data[i];
             }
     
             T const& operator[](int i) const { 
-             //— returns an immutable reference to the indexed element
-       
-             }*/
+                T const& retval = &data[i];
+                return retval;
+             }
              
              
             int getArraySize() const {

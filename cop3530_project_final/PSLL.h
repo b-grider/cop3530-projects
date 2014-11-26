@@ -54,6 +54,14 @@ class PSLL {
         }
      }
     
+    link getNodeContaining(int index) {
+        link temp = listHead;
+        while(index!=0) {
+            temp=temp->next;
+            index--;
+        }
+    }
+    
     void appendFree(link a) {               //appends a node to the free list at head.
         if(freeSize==0) {
             freeHead=a; freeSize++;
@@ -319,6 +327,40 @@ class PSLL {
             return PSLL_Const_Iter(listTail->next);
         }
      
+        
+        T& operator[](int i) { 
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(i < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(i >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else {
+            link temp = this->getNodeContaining(i);
+            return &(temp->data);
+        }
+    }
+    
+    T const& operator[](int i) const { 
+        if(this->is_empty()) {
+            throw std::out_of_range("This is an empty SSLL");
+        }
+        else if(i < 0) {
+            throw std::invalid_argument("Valid arguments must be in the range [0,list size-1]");
+        }
+        else if(i >= listSize) {
+            throw std::out_of_range("A valid index must be < list size");
+        }
+        else {
+            link temp = this->getNodeContaining(i);
+            T const& retval = &(temp->data);
+            return retval;
+        }
+    }
+        
         
         void testFreeNodes(int a, int b) {
             freeNodes(a,b);
