@@ -26,13 +26,13 @@ class hashmap_buckets {
             item(int thisKey, char thisValue, item* nextOne) : key(thisKey), value(thisValue), next(nextOne) {}
         };
         
-        typedef item* link;
+       //typedef item* link;
     
         //=============================
         //FIELDS    FIELDS      FIELDS
         //=============================
     
-    link kvpairs[50];
+    item** kvpairs;
     int numberOfItems;
     
     
@@ -40,7 +40,7 @@ class hashmap_buckets {
             //  PRIVATE MEMBER FUNCTIONS
             //===========================
     
-            bool exists(link thisItem, int key) {
+            bool exists(item* thisItem, int key) {
                 bool retval=false;
 
                 while(thisItem != nullptr) {
@@ -53,7 +53,7 @@ class hashmap_buckets {
                 return retval;
             }
             
-            void replaceValue(link thisItem, char value ) {
+            void replaceValue(item* thisItem, char value ) {
                 thisItem->value = value;
             }
             
@@ -73,7 +73,7 @@ public:
     //=============================
     
     hashmap_buckets() {
-        //kvpairs = new link[50];
+        kvpairs = new item*[50];
         
             for(int i=0; i<50; i++) {
                 kvpairs[i] = nullptr;       //initialize all array slots as empty
@@ -92,7 +92,7 @@ bool insert( int key, char value ) {
          int count = 0;           //Start with the count at 0 break if we hit 50
          item* temptr = kvpairs[i];
          
-            while((temptr != nullptr) && (temptr->key != key)) {
+            while((temptr) && (temptr->key != key)) {
                 temptr = temptr->next;
             }
          
@@ -143,15 +143,19 @@ bool search( int key, int value ) {
 void clear() {
     
     for(int i=0; i<50; i++) {
-        if(kvpairs[i]!=nullptr) {
+        
+        if(kvpairs[i]) {
             item* temptr1 = kvpairs[i];
             item* temptr2;
-            while(temptr1 != nullptr) {
-                temptr2 = temptr1->next;
-                delete temptr1;
-                temptr1=temptr2;
-            }
+            
+                while(temptr1 != nullptr) {
+                    temptr2 = temptr1->next;
+                    delete temptr1;
+                    temptr1=temptr2;
+                }
+            
         }
+        
     }
     numberOfItems=0;
     
@@ -186,6 +190,7 @@ double load() {
 //— returns the map's load factor (size = load * capacity).
 
 std::ostream& print( std::ostream& o ) {
+    
     int s = this->capacity();
     
         for(int i=0; i<s; i++) {

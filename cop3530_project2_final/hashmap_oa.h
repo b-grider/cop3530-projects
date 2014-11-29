@@ -24,13 +24,12 @@ class hashmap_oa {
             item(int thisKey, char thisValue) : key(thisKey), value(thisValue) {} 
         };
         
-        typedef item* link;
     
         //=============================
         //FIELDS    FIELDS      FIELDS
         //=============================
     
-    link kvpairs[50];
+    item** kvpairs;
     int numberOfItems;
     
     
@@ -38,24 +37,37 @@ class hashmap_oa {
             //  PRIVATE MEMBER FUNCTIONS
             //===========================
     
-            bool exists(link thisItem, int key) {
-                bool retval;
+            bool exists(item* thisItem, int k) {
+                bool retval = false;
 
-                    if(thisItem == nullptr) {
-                        retval == false;
-                    }
-                    else if(thisItem->key == key) {     //If an item with the same key exists
+                if(thisItem) {
+                    if(thisItem->key == k) {     //If an item with the same key exists
                             retval = true;                                                      //return true
                      }
-                    else {
-                        retval=false;
-                    }
+                }
 
                 return retval;
             }
             
-            void replaceValue(link thisItem, char value ) {
+            
+            item* getItem(int key) {
+                int location = key%50;
+                int original = location;
+                
+                while((kvpairs[location]) && (kvpairs[location]->key != key)) {
+                    (location<49)? location++: location=0;
+                    if(location == (original-1)) {
+                        return nullptr;
+                    }
+                }
+               
+                return kvpairs[location];
+            }
+            
+            
+            void replaceValue(item* thisItem, char value ) {
                 thisItem->value = value;
+                return;
             }
             
             int primaryHash(int key) {
@@ -64,6 +76,19 @@ class hashmap_oa {
             
             int secondaryHash(int key) {
                 return ((key%97)+1);
+            }
+            
+            
+            void reInsert(item** start) {        //This will linearly re-insert all items after the given start pointer.
+                while((*start) != nullptr) {                  //While the examined slot is not empty.
+                    item** temp = start;
+                    int k = (*temp)->key;
+                    char c = (*temp)->value;
+                    delete *temp;
+                    insert(k, c);
+                    start++;
+                }
+                return;
             }
     
     
@@ -74,25 +99,36 @@ public:
     //=============================
     
     hashmap_oa() {
-        //kvpairs = new link[50];
+        kvpairs = new item*[50];
         
             for(int i=0; i<50; i++) {
                 kvpairs[i] = nullptr;       //initialize all array slots as empty
             }
     }
     
+    ~hashmap_oa() {
+        delete [] kvpairs;
+    }
+    
+   /* operator=(const hashmap_oa& src) {
+        int count = 50;
+        while(count != 0) {
+            
+        }
+    }*/
+    
     //========================
-    //     PUBLIC MEMBERS
+    //   OTHER PUBLIC MEMBERS
     //======================== 
     
 bool insert( int key, char value ) {
     
-    bool retval;
+    bool retval=false;
                         
          int i=key%50;            //starting array index is key%50 (naive hash)
          int count = 0;           //Start with the count at 0 break if we hit 50
          
-            while((kvpairs[i] != nullptr) && !(this->exists(kvpairs[i], key))) {
+            while((kvpairs[i]) && !(this->exists(kvpairs[i], key))) {
                 (i<49)? i++: i=0;       //wrap around
                 count++;                //increment count for every comparison
                 if(count == 50) {
@@ -118,26 +154,34 @@ bool insert( int key, char value ) {
 // — if there is space available, adds the specified key/value-pair to the hash map and returns true; 
 //otherwise returns false. If an item already exists in the map with the same key, replace its value.
 
-bool remove( int key, char value) {
+bool remove( int key, char &value) {
     
+    bool retval = false;
+    item* i = getItem(key);
+    item** re= &i; 
+    re++;
     
+    if(i) {
+        value = i->value;
+        delete i;
+        retval = true;
+        reInsert(re);
+    }
     
-    return true;
+    return retval;
 }
 //— if there is an item matching key, removes the key/value-pair from the map, stores it's value in value, 
 //and returns true; otherwise returns false.
 
-bool search( int key, int value ) {
+bool search( int key, char &value ) {
     
     bool retval=false;
-    int cap = this->capacity();
+    item* i = getItem(key);
     
-        for(int i=0; i<cap; i++) {
-            if(this->exists(kvpairs[i], key)) {                     //If an item with the same key exists
-                kvpairs[key%50]->value = value;         //access it and replace the value with this value
-                retval = true;
-            }
-        }
+    if(i) {
+        value = i->value;
+        retval = true;
+    }
     
     return retval;
 }
@@ -148,7 +192,7 @@ bool search( int key, int value ) {
 void clear() {
     
     for(int i=0; i<50; i++) {
-        if(kvpairs[i]!=nullptr) {
+        if(kvpairs[i]) {
             delete kvpairs[i];
             kvpairs[i] = nullptr;
         }
@@ -164,7 +208,7 @@ bool is_empty() {
     
     bool retval;
     
-        (numberOfItems == 50)? retval=true: retval=false;
+        (numberOfItems == 0)? retval=true: retval=false;
     
     return retval;
 }
