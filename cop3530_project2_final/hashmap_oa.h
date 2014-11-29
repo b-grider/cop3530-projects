@@ -164,6 +164,7 @@ bool remove( int key, char &value) {
     if(i) {
         value = i->value;
         delete i;
+        numberOfItems--;
         retval = true;
         reInsert(re);
     }

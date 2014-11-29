@@ -202,6 +202,6 @@ TEST_CASE("Testing insert to maximum capacity for hashmap_oa", "[insert(), load(
 
 TEST_CASE("Test remove, check to see if value reference is changed", "[hashmap_oa::remove()]") {
     char v = 'q';
-    map1.remove(12, v);
+//    map1.remove(12, v);
     //REQUIRE(v == 'j');
 }

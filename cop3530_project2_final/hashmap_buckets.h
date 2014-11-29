@@ -65,6 +65,38 @@ class hashmap_buckets {
                 return ((key%43)+1);
             }
     
+            
+            item* getItem(int key) {
+                int location = key%50;
+                item* temptr = kvpairs[location];
+                
+                while((temptr) && ((temptr->key) != key)) {
+                    temptr=temptr->next;
+                }
+               
+                return temptr;
+            }
+            
+            item* getPrevious(int key) {
+                int location = key%50;
+                item* lead = kvpairs[location];
+                item* trailer = nullptr;
+                
+                if(lead->next) {
+                    while(lead->key != key) {
+                        trailer=lead;
+                        lead=lead->next;
+                    }
+                    return trailer;
+                }
+                else if(lead) {
+                    return lead;
+                }
+                else {
+                    return nullptr;
+                }
+            }
+            
     
 public:
     
@@ -80,13 +112,18 @@ public:
             }
     }
     
+    ~hashmap_buckets() {
+        this->clear();
+        delete [] kvpairs;
+    }
+    
     //========================
     //     PUBLIC MEMBERS
     //======================== 
     
 bool insert( int key, char value ) {
     
-    bool retval;
+    bool retval=false;
                         
          int i=key%50;            //starting array index is key%50 (naive hash)
          int count = 0;           //Start with the count at 0 break if we hit 50
@@ -96,15 +133,16 @@ bool insert( int key, char value ) {
                 temptr = temptr->next;
             }
          
-         if(this->exists(temptr, key)) {
-             this->replaceValue(temptr, value );
-             retval=true;
-            // numberOfItems++;         don't increment the size; something is being replaced
-         }
-         else if(temptr == nullptr) {
+         if(temptr == nullptr) {
              temptr = new item(key, value);
              retval=true;
              numberOfItems++;
+         }
+         
+         else if(temptr->key == key) {
+             this->replaceValue(temptr, value );
+             retval=true;
+            // numberOfItems++;         don't increment the size; something is being replaced
          }
          
     return retval;
@@ -113,14 +151,37 @@ bool insert( int key, char value ) {
 // — if there is space available, adds the specified key/value-pair to the hash map and returns true; 
 //otherwise returns false. If an item already exists in the map with the same key, replace its value.
 
-bool remove( std::string key, int value) {
+bool remove( int key, char &value) {
     
-    return true;
+    bool retval = false;
+    item* i = getItem(key);
+    item* prev = getPrevious(key);
+    
+    if(i) {
+        value = i->value;
+        if(prev) {              //it has a previous item in the local list..
+            if(prev->key != key) {  //there is two or more items in the local list..
+                item* n = i->next;
+                delete i;
+                prev->next = n;
+            }
+            else {                  //there is only one item in the local list (the one we want to remove))
+                delete i;
+                i=nullptr;
+            }
+            retval=true;
+        }
+        else {                  //there are no items in the local list..
+            retval = false;
+        }
+    }
+    
+    return retval;
 }
 //— if there is an item matching key, removes the key/value-pair from the map, stores it's value in value, 
 //and returns true; otherwise returns false.
 
-bool search( int key, int value ) {
+bool search( int key, char &value ) {
     
     bool retval=false;
     int index = key%50;
