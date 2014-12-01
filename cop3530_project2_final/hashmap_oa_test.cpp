@@ -6,6 +6,8 @@
 #include<sstream>
 
 
+using namespace cop3530;
+
 static hashmap_oa map1;
 
 TEST_CASE( "Testing the insert() function and verifying with the bool results and size function", "[insert(), size()]" ) {

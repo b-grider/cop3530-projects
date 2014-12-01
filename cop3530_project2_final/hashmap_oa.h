@@ -10,6 +10,7 @@
 
 #include<iostream>
 
+namespace cop3530 {
 
 class hashmap_oa {
     
@@ -249,6 +250,8 @@ std::ostream& print( std::ostream& o ) {
 //[This function will be used for debugging/monitoring].
     
 };
+
+}
 
 #endif	/* HASHMAP_OA_H */
 

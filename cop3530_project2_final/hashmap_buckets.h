@@ -10,6 +10,7 @@
 
 #include<iostream>
 
+namespace cop3530 {
 
 class hashmap_buckets {
     
@@ -273,6 +274,7 @@ std::ostream& print( std::ostream& o ) {
 //[This function will be used for debugging/monitoring].
     
 };
+}
 
 #endif  /* hashmap_buckets_H */
 

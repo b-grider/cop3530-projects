@@ -4,10 +4,11 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>RBST.h</itemPath>
       <itemPath>catch.h</itemPath>
       <itemPath>hashmap_buckets.h</itemPath>
       <itemPath>hashmap_oa.h</itemPath>
-      <itemPath>oa_hashmap.h</itemPath>
+      <itemPath>multi_hashmap.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -16,6 +17,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>RBST_test.cpp</itemPath>
       <itemPath>hashmap_buckets_test.cpp</itemPath>
       <itemPath>hashmap_oa_test.cpp</itemPath>
     </logicalFolder>
@@ -45,6 +47,10 @@
           <commandLine>-std=c++0x</commandLine>
         </ccTool>
       </compileType>
+      <item path="RBST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RBST_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="catch.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="hashmap_buckets.h" ex="false" tool="3" flavor2="0">
@@ -55,7 +61,7 @@
       </item>
       <item path="hashmap_oa_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="oa_hashmap.h" ex="false" tool="3" flavor2="0">
+      <item path="multi_hashmap.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -78,6 +84,10 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="RBST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RBST_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="catch.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="hashmap_buckets.h" ex="false" tool="3" flavor2="0">
@@ -88,7 +98,7 @@
       </item>
       <item path="hashmap_oa_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="oa_hashmap.h" ex="false" tool="3" flavor2="0">
+      <item path="multi_hashmap.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
